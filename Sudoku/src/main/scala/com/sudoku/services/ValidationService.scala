@@ -24,4 +24,20 @@ class ValidationService {
 
   }
 
+  def isValid2(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
+
+    for {
+      invalidBoard <- ZIO.succeed(
+        sudokuBoard.items.length != 9 ||
+          sudokuBoard.items.exists { rows =>
+            rows.length != 9 ||
+              rows.exists { cell =>
+                cell.value < 1 || cell.value > 9
+              }
+          }
+      )
+    } yield (!invalidBoard)
+
+  }
+
 }
