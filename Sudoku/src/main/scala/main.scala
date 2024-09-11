@@ -11,17 +11,15 @@ object main extends ZIOAppDefault {
       Method.POST / "validate" -> handler { (req: Request) =>
         (for {
           bodyStr <- req.body.asString.orElse(ZIO.succeed(""))
-          parseBodyAsSudokuBoard <- JsonUtils.fromJson(bodyStr)
-          isValid <- ValidationService.isValid(parseBodyAsSudokuBoard)
+          isValidBoard <- ValidationService.isValidBoard(bodyStr)
         } yield {
-          if (isValid)
+          if (isValidBoard)
             Response.text("""Board is valid!""")
           else
             Response.text("""Board is invalid!""")
         }).catchAll { _ =>
           ZIO.succeed(Response.text(s"""Error while generating board!"""))
         }
-
       }
     )
 

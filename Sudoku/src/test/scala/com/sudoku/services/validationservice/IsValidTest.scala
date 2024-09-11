@@ -12,31 +12,31 @@ object IsValidTest extends ZIOSpecDefault {
      test("Return false when grid has less than 9 columns") {
         for {
           input <- generateBoardWithAllValuesEqual(Some(1))
-          actual <- target.isValid(input)
+          actual <- target.isValidFormat(input)
         } yield assertTrue(!actual)
       },
       test("Return false when grid has more than 9 columns") {
         for {
           input <- generateBoardWithAllValuesEqual(Some(1))
-          actual <- target.isValid(input)
+          actual <- target.isValidFormat(input)
         } yield assertTrue(!actual)
       },
       test("Return false when at least one column has more or less than 9 rows") {
         for {
           input <- generateBoardWithAllValuesEqual(Some(1))
-          actual <- target.isValid(input)
+          actual <- target.isValidFormat(input)
         } yield assertTrue(!actual)
       },
       test("Return false when at least one column has more or less than 9 rows") {
         for {
           input <- generateBoardWithAllValuesEqual(Some(1))
-          actual <- target.isValid(input)
+          actual <- target.isValidFormat(input)
         } yield assertTrue(!actual)
       },
       test("Return false when data is not valid (at least one number is not between 1 and 9)") {
         for {
           input <- generateBoardWithAllValuesEqual(Some(0))
-          actual <- target.isValid(input)
+          actual <- target.isValidFormat(input)
         } yield assertTrue(!actual)
       }
     )

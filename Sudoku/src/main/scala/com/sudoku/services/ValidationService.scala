@@ -2,6 +2,7 @@ package com.sudoku.services
 
 import com.sudoku.models.{SudokuBoard, SudokuCell}
 import com.sudoku.services.Quadrants.*
+import com.sudoku.utils.JsonUtils
 import zio.{Runtime, Unsafe, ZIO}
 
 sealed trait Quadrant
@@ -45,14 +46,27 @@ object Quadrants {
 
 object ValidationService {
 
+  def isValidBoard(boardJsonString: String): ZIO[Any, String, Boolean] = {
+    (for {
+      bodyStr <- ZIO.succeed(boardJsonString)
+      parseBodyAsSudokuBoard <- JsonUtils.fromJson(bodyStr)
+      isValidFormat <- ValidationService.isValidFormat(parseBodyAsSudokuBoard)
+      hasDuplicatesInRows <- ValidationService.duplicatesInRows(parseBodyAsSudokuBoard)
+      hasDuplicatesInColumns <- ValidationService.duplicatesInColumns(parseBodyAsSudokuBoard)
+      hasDuplicatesInQuadrants <- ValidationService.duplicatesInQuadrants(parseBodyAsSudokuBoard)
+    } yield {
+      isValidFormat && !hasDuplicatesInRows && !hasDuplicatesInColumns && !hasDuplicatesInQuadrants
+    })
+  }
+
   def isFilled(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     for {
-      valid <- isValid(sudokuBoard)
+      valid <- isValidFormat(sudokuBoard)
       containsEmptyElements <- ZIO.succeed(sudokuBoard.items.flatten.exists(_.value.isEmpty))
     } yield (valid && !containsEmptyElements)
   }
 
-  def isValid(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
+  def isValidFormat(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
 
     for {
       invalidBoard <- ZIO.succeed(
@@ -65,8 +79,9 @@ object ValidationService {
           }
       )
     } yield (!invalidBoard)
-
   }
+
+
 
 
   private def duplicatesInColumns(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
