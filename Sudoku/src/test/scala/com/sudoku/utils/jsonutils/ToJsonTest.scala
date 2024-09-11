@@ -7,12 +7,11 @@ import zio.test.*
 
 object ToJsonTest extends ZIOSpecDefault {
   def spec: Spec[Any, Nothing] = {
-    val target = new JsonUtils()
     suite("Sudoku -> Json Utilities -> toJson -> Specs")(
       test("Return json string from the sudoku board model") {
         for {
           input <- generateBoardWithAllValuesEqual(Some(2))
-          actual <- target.toJson(input)
+          actual <- JsonUtils.toJson(input)
         } yield {
           assertTrue(actual == """{"items":[[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}]]}""".stripMargin)
         }

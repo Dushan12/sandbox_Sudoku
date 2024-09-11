@@ -5,7 +5,7 @@ import zio.{IO, ZIO}
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonCodec, JsonDecoder, JsonEncoder}
 import zio.json.*
 
-class JsonUtils {
+object JsonUtils {
   def toJson(board: SudokuBoard): ZIO[Any, Nothing, String] = {
     ZIO.succeed(board.toJson)
   }

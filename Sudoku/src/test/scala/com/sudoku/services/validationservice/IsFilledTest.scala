@@ -7,7 +7,7 @@ import zio.test.*
 
 object IsFilledTest extends ZIOSpecDefault {
   def spec: Spec[Any, Nothing] = {
-    val target = new ValidationService()
+    val target = ValidationService
     suite("Sudoku -> Validate Service -> isFilled -> Specs")(
       test("Return false when all elements in the sudoku board are empty") {
         for {

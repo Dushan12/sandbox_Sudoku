@@ -3,7 +3,7 @@ package com.sudoku.utils
 import com.sudoku.models.SudokuBoard
 import zio.ZIO
 
-class PrintUtil {
+object PrintUtil {
 
   def generateAsciiBoard(board: SudokuBoard): ZIO[Any, Nothing, String] = {
     ZIO.succeed(s"""|""" +

@@ -7,7 +7,7 @@ import zio.test.*
 
 object IsValidTest extends ZIOSpecDefault {
   def spec: Spec[Any, Nothing] = {
-    val target = new ValidationService()
+    val target = ValidationService
     suite("Sudoku -> Validate Service -> isValid -> Specs")(
      test("Return false when grid has less than 9 columns") {
         for {

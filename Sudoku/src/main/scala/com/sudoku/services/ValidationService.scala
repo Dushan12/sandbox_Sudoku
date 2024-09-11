@@ -3,7 +3,7 @@ package com.sudoku.services
 import com.sudoku.models.SudokuBoard
 import zio.ZIO
 
-class ValidationService {
+object ValidationService {
 
   def isFilled(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     for {
