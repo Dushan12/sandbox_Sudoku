@@ -19,7 +19,7 @@ object main extends ZIOAppDefault {
           else
             Response.text("""Board is invalid!""")
         }).catchAll { _ =>
-          ZIO.succeed(Response.text("""Board is invalid!"""))
+          ZIO.succeed(Response.text(s"""Error while generating board!"""))
         }
 
       }

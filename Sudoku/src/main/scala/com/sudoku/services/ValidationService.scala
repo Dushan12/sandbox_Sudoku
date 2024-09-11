@@ -1,19 +1,45 @@
 package com.sudoku.services
 
 import com.sudoku.models.{SudokuBoard, SudokuCell}
-import zio.ZIO
+import com.sudoku.services.Quadrants.*
+import zio.{Runtime, Unsafe, ZIO}
 
 sealed trait Quadrant
 
-final case class Quadrant1() extends Quadrant
-final case class Quadrant2() extends Quadrant
-final case class Quadrant3() extends Quadrant
-final case class Quadrant4() extends Quadrant
-final case class Quadrant5() extends Quadrant
-final case class Quadrant6() extends Quadrant
-final case class Quadrant7() extends Quadrant
-final case class Quadrant8() extends Quadrant
-final case class Quadrant9() extends Quadrant
+object Quadrants {
+  final case class Quadrant1() extends Quadrant
+
+  final case class Quadrant2() extends Quadrant
+
+  final case class Quadrant3() extends Quadrant
+
+  final case class Quadrant4() extends Quadrant
+
+  final case class Quadrant5() extends Quadrant
+
+  final case class Quadrant6() extends Quadrant
+
+  final case class Quadrant7() extends Quadrant
+
+  final case class Quadrant8() extends Quadrant
+
+  final case class Quadrant9() extends Quadrant
+
+
+  def getAll: List[Quadrant] = List(
+    Quadrant1(),
+    Quadrant2(),
+    Quadrant3(),
+    Quadrant4(),
+    Quadrant5(),
+    Quadrant6(),
+    Quadrant7(),
+    Quadrant8(),
+    Quadrant9(),
+  )
+}
+
+
 
 
 
@@ -50,6 +76,23 @@ object ValidationService {
     }.forall(identity))
   }
 
+  private def duplicatesInRows(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
+    for {
+      invert <- invertColumnsAndRows(sudokuBoard)
+      duplicates <- duplicatesInColumns(invert)
+    } yield duplicates
+  }
+
+  private def duplicatesInQuadrants(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
+    ZIO.succeed(Quadrants.getAll.map { quadrantName =>
+      Unsafe.unsafe { implicit unsafe =>
+        Runtime.default.unsafe.run(getQuadrant(sudokuBoard, quadrantName)).getOrElse(_ => List.empty[List[SudokuCell]])
+      }
+    }.exists { quadrantElements =>
+      quadrantElements.length != quadrantElements.distinct.length
+    })
+  }
+
   def invertColumnsAndRows(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, SudokuBoard] = {
     ZIO.succeed(SudokuBoard((0 to 8).toList.map { index =>
       sudokuBoard.items.map { columns =>
@@ -58,51 +101,43 @@ object ValidationService {
     }))
   }
 
-  private def duplicatesInRows(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
-      for {
-      invert <- invertColumnsAndRows(sudokuBoard)
-      duplicates <- duplicatesInColumns(invert)
-    } yield duplicates
-  }
-
   def getQuadrant(sudokuBoard: SudokuBoard, quadrant: Quadrant): ZIO[Any, Nothing, List[List[SudokuCell]]] = {
     quadrant match {
-      case com.sudoku.services.Quadrant1() => ZIO.succeed(
+      case Quadrant1() => ZIO.succeed(
             sudokuBoard.items.slice(0,3).map { rows =>
               rows.slice(0,3)
             })
-      case com.sudoku.services.Quadrant2() => ZIO.succeed(
+      case Quadrant2() => ZIO.succeed(
           sudokuBoard.items.slice(0,3).map { rows =>
             rows.slice(3,6)
           })
-
-      case com.sudoku.services.Quadrant3() => ZIO.succeed(
+      case Quadrant3() => ZIO.succeed(
         sudokuBoard.items.slice(0,3).map { rows =>
           rows.slice(6,9)
         })
-      case com.sudoku.services.Quadrant4() => ZIO.succeed(
-          sudokuBoard.items.slice(0,3).map { rows =>
-            rows.slice(3,5)
+      case Quadrant4() => ZIO.succeed(
+          sudokuBoard.items.slice(3,6).map { rows =>
+            rows.slice(0,3)
           })
-      case com.sudoku.services.Quadrant5() => ZIO.succeed(
-        sudokuBoard.items.slice(4,6).map { rows =>
-          rows.slice(3,5)
+      case Quadrant5() => ZIO.succeed(
+        sudokuBoard.items.slice(3,6).map { rows =>
+          rows.slice(3,6)
         })
-      case com.sudoku.services.Quadrant6() => ZIO.succeed(
-        sudokuBoard.items.slice(7,9).map { rows =>
-          rows.slice(3,5)
+      case Quadrant6() => ZIO.succeed(
+        sudokuBoard.items.slice(3,6).map { rows =>
+          rows.slice(6,9)
         })
-      case com.sudoku.services.Quadrant7() => ZIO.succeed(
-        sudokuBoard.items.slice(0,2).map { rows =>
-          rows.slice(6,8)
+      case Quadrant7() => ZIO.succeed(
+        sudokuBoard.items.slice(6,9).map { rows =>
+          rows.slice(0,3)
         })
-      case com.sudoku.services.Quadrant8() => ZIO.succeed(
-        sudokuBoard.items.slice(3,5).map { rows =>
-          rows.slice(6,8)
+      case Quadrant8() => ZIO.succeed(
+        sudokuBoard.items.slice(6,9).map { rows =>
+          rows.slice(3,6)
         })
-      case com.sudoku.services.Quadrant9() => ZIO.succeed(
-        sudokuBoard.items.slice(6,8).map { rows =>
-          rows.slice(6,8)
+      case Quadrant9() => ZIO.succeed(
+        sudokuBoard.items.slice(6,9).map { rows =>
+          rows.slice(6,9)
         })
     }
 
