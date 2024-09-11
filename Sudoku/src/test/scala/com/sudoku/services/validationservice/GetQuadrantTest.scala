@@ -1,14 +1,14 @@
 package com.sudoku.services.validationservice
 
 import com.sudoku.models.SudokuCell
-import com.sudoku.services.Quadrants.{Quadrant1, Quadrant2, Quadrant3, Quadrant4, Quadrant5, Quadrant6, Quadrant7, Quadrant8, Quadrant9}
+import com.sudoku.enumerations.Quadrants._
 import com.sudoku.services.ValidationService
 import com.sudoku.utils.{JsonUtils, PrintUtil}
 import zio.{Console, ZIO, *}
 import zio.test.*
 
 object GetQuadrantTest extends ZIOSpecDefault {
-  def spec: Spec[TestEnvironment & Scope, Any] = {    
+  def spec: Spec[TestEnvironment & Scope, Any] = {
     suite("Sudoku -> Validate Service -> getQuadrant -> Specs")(
       test("Return first quadrant") {
         for {
