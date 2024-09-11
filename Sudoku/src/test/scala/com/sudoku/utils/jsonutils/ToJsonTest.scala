@@ -1,6 +1,7 @@
 package com.sudoku.utils.jsonutils
 
 
+import com.sudoku.services.ValidationService
 import com.sudoku.utils.BoardGeneratorUtil.*
 import com.sudoku.utils.JsonUtils
 import zio.test.*
