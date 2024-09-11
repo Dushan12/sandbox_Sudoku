@@ -6,12 +6,6 @@ import com.sudoku.enumerations.Quadrants.*
 import com.sudoku.utils.JsonUtils
 import zio.{Runtime, Unsafe, ZIO}
 
-
-
-
-
-
-
 object ValidationService {
 
   def isValidBoard(boardJsonString: String): ZIO[Any, String, Boolean] = {
@@ -54,9 +48,10 @@ object ValidationService {
 
   private def duplicatesInColumns(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     ZIO.succeed(sudokuBoard.items.map { columns =>
-      val columnValues = columns.map(_.value).collect { case Some(value) => value }
-      columnValues.distinct.length == columnValues.length
-    }.forall(identity))
+      columns.map(_.value).collect { case Some(value) => value }
+    }.exists { columnValues =>
+      columnValues.distinct.length != columnValues.length
+    })
   }
 
   private def duplicatesInRows(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
@@ -72,7 +67,8 @@ object ValidationService {
         Runtime.default.unsafe.run(getQuadrant(sudokuBoard, quadrantName)).getOrElse(_ => List.empty[List[SudokuCell]])
       }
     }.exists { quadrantElements =>
-      quadrantElements.length != quadrantElements.distinct.length
+      val quadrantValues = quadrantElements.flatten.map(_.value).collect { case Some(value) => value }
+      quadrantValues.length != quadrantValues.distinct.length
     })
   }
 
@@ -87,21 +83,21 @@ object ValidationService {
   def getQuadrant(sudokuBoard: SudokuBoard, quadrant: Quadrant): ZIO[Any, Nothing, List[List[SudokuCell]]] = {
     quadrant match {
       case Quadrant1() => ZIO.succeed(
-            sudokuBoard.items.slice(0,3).map { rows =>
-              rows.slice(0,3)
-            })
+        sudokuBoard.items.slice(0,3).map { rows =>
+          rows.slice(0,3)
+        })
       case Quadrant2() => ZIO.succeed(
-          sudokuBoard.items.slice(0,3).map { rows =>
-            rows.slice(3,6)
-          })
+        sudokuBoard.items.slice(0,3).map { rows =>
+          rows.slice(3,6)
+        })
       case Quadrant3() => ZIO.succeed(
         sudokuBoard.items.slice(0,3).map { rows =>
           rows.slice(6,9)
         })
       case Quadrant4() => ZIO.succeed(
-          sudokuBoard.items.slice(3,6).map { rows =>
-            rows.slice(0,3)
-          })
+        sudokuBoard.items.slice(3,6).map { rows =>
+          rows.slice(0,3)
+        })
       case Quadrant5() => ZIO.succeed(
         sudokuBoard.items.slice(3,6).map { rows =>
           rows.slice(3,6)

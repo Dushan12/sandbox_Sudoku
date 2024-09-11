@@ -1,7 +1,6 @@
 package com.sudoku.utils.jsonutils
 
 
-import com.sudoku.services.ValidationService
 import com.sudoku.utils.BoardGeneratorUtil.*
 import com.sudoku.utils.JsonUtils
 import zio.test.*
@@ -15,6 +14,14 @@ object ToJsonTest extends ZIOSpecDefault {
           actual <- JsonUtils.toJson(input)
         } yield {
           assertTrue(actual == """{"items":[[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}],[{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2},{"value":2}]]}""".stripMargin)
+        }
+      },
+      test("Return json string from the sudoku empty board model") {
+        for {
+          input <- generateEmptyBoard()
+          actual <- JsonUtils.toJson(input)
+        } yield {
+          assertTrue(actual == """{"items":[[{},{},{},{},{},{},{},{},{}],[{},{},{},{},{},{},{},{},{}],[{},{},{},{},{},{},{},{},{}],[{},{},{},{},{},{},{},{},{}],[{},{},{},{},{},{},{},{},{}],[{},{},{},{},{},{},{},{},{}],[{},{},{},{},{},{},{},{},{}],[{},{},{},{},{},{},{},{},{}]]}""".stripMargin)
         }
       }
     )

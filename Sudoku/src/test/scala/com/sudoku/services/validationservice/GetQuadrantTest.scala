@@ -1,11 +1,11 @@
 package com.sudoku.services.validationservice
 
+import com.sudoku.enumerations.Quadrants.*
 import com.sudoku.models.SudokuCell
-import com.sudoku.enumerations.Quadrants._
 import com.sudoku.services.ValidationService
-import com.sudoku.utils.{JsonUtils, PrintUtil}
-import zio.{Console, ZIO, *}
+import com.sudoku.utils.JsonUtils
 import zio.test.*
+import zio.{Console, ZIO, *}
 
 object GetQuadrantTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {

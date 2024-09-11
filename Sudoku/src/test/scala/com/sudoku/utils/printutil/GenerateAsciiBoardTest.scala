@@ -1,8 +1,5 @@
 package com.sudoku.utils.printutil
 
-class GenerateAsciiBoardTest {
-
-}
 import com.sudoku.services.ValidationService
 import com.sudoku.services.validationservice.GetQuadrantTest.{suite, test}
 import com.sudoku.utils.{JsonUtils, PrintUtil}

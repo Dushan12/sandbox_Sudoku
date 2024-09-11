@@ -1,12 +1,13 @@
 package com.sudoku.services.validationservice
 
-import com.sudoku.models.{SudokuBoard, SudokuCell}
 import com.sudoku.services.ValidationService
-import com.sudoku.utils.BoardGeneratorUtil._
+import com.sudoku.utils.BoardGeneratorUtil.*
+import com.sudoku.utils.JsonUtils
 import zio.test.*
+import zio.{Scope, ZIO}
 
-object IsValidTest extends ZIOSpecDefault {
-  def spec: Spec[Any, Nothing] = {
+object IsValidFormatTest extends ZIOSpecDefault {
+  def spec: Spec[TestEnvironment & Scope, Any] = {
     val target = ValidationService
     suite("Sudoku -> Validate Service -> isValid -> Specs")(
      test("Return false when grid has less than 9 columns") {
@@ -38,6 +39,23 @@ object IsValidTest extends ZIOSpecDefault {
           input <- generateBoardWithAllValuesEqual(Some(0))
           actual <- target.isValidFormat(input)
         } yield assertTrue(!actual)
+      },
+      test("Return true when data is valid") {
+        for {
+          input <- ZIO.succeed("""{"items":[
+                                 |[{},{},{},{},{"value":5},{},{"value":9},{"value":2},{}],
+                                 |[{"value":1},{},{},{},{"value":4},{"value":2},{"value":7},{"value":6},{"value":3}],
+                                 |[{"value":9},{},{"value":2},{},{},{"value":7},{},{},{"value":5}],
+                                 |[{},{},{},{},{},{"value":3},{"value":1},{"value":5},{"value":7}],
+                                 |[{},{"value":5},{},{"value":6},{},{"value":9},{},{"value":8},{}],
+                                 |[{},{},{},{"value":5},{"value":7},{},{},{},{}],
+                                 |[{"value":5},{},{},{},{"value":9},{"value":8},{"value":6},{},{"value":2}],
+                                 |[{},{"value":2},{"value":7},{"value":3},{},{"value":1},{},{},{"value":9}],
+                                 |[{},{"value":4},{"value":9},{"value":7},{},{},{"value":8},{"value":3},{}]
+                                 |]}""".stripMargin)
+          inputBoard <- JsonUtils.fromJson(input)
+          actual <- target.isValidFormat(inputBoard)
+        } yield assertTrue(actual)
       }
     )
   }
