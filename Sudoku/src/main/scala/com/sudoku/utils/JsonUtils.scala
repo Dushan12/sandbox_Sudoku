@@ -1,8 +1,7 @@
 package com.sudoku.utils
 
 import com.sudoku.models.SudokuBoard
-import zio.{IO, ZIO}
-import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonCodec, JsonDecoder, JsonEncoder}
+import zio.ZIO
 import zio.json.*
 
 object JsonUtils {

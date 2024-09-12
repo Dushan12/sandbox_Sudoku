@@ -8,14 +8,12 @@ import zio.{Runtime, Unsafe, ZIO}
 
 object ValidationService {
 
-  def isValidBoard(boardJsonString: String): ZIO[Any, String, Boolean] = {
+  def isValidBoard(board: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     (for {
-      bodyStr <- ZIO.succeed(boardJsonString)
-      parseBodyAsSudokuBoard <- JsonUtils.fromJson(bodyStr)
-      isValidFormat <- ValidationService.isValidFormat(parseBodyAsSudokuBoard)
-      hasDuplicatesInRows <- ValidationService.duplicatesInRows(parseBodyAsSudokuBoard)
-      hasDuplicatesInColumns <- ValidationService.duplicatesInColumns(parseBodyAsSudokuBoard)
-      hasDuplicatesInQuadrants <- ValidationService.duplicatesInQuadrants(parseBodyAsSudokuBoard)
+      isValidFormat <- ValidationService.isValidFormat(board)
+      hasDuplicatesInRows <- ValidationService.duplicatesInRows(board)
+      hasDuplicatesInColumns <- ValidationService.duplicatesInColumns(board)
+      hasDuplicatesInQuadrants <- ValidationService.duplicatesInQuadrants(board)
     } yield {
       isValidFormat && !hasDuplicatesInRows && !hasDuplicatesInColumns && !hasDuplicatesInQuadrants
     })
@@ -43,9 +41,6 @@ object ValidationService {
     } yield (!invalidBoard)
   }
 
-
-
-
   private def duplicatesInColumns(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     ZIO.succeed(sudokuBoard.items.map { columns =>
       columns.map(_.value).collect { case Some(value) => value }
@@ -62,14 +57,14 @@ object ValidationService {
   }
 
   private def duplicatesInQuadrants(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
-    ZIO.succeed(QuadrantsEnum.values.map { quadrantName =>
-      Unsafe.unsafe { implicit unsafe =>
-        Runtime.default.unsafe.run(getQuadrant(sudokuBoard, quadrantName)).getOrElse(_ => List.empty[List[SudokuCell]])
-      }
-    }.exists { quadrantElements =>
-      val quadrantValues = quadrantElements.flatten.map(_.value).collect { case Some(value) => value }
-      quadrantValues.length != quadrantValues.distinct.length
-    })
+    for {
+      quadrants <- ZIO.collectAll(QuadrantsEnum.values.map { quadrantName => getQuadrant(sudokuBoard, quadrantName) })
+      existsDuplicateInQuadrant <- ZIO.succeed(quadrants
+        .map(_.flatten.map(_.value).collect { case Some(value) => value })
+        .map { exists => exists.length != exists.distinct.length })
+    } yield {
+      existsDuplicateInQuadrant.forall(identity)
+    }
   }
 
   def invertColumnsAndRows(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, SudokuBoard] = {
