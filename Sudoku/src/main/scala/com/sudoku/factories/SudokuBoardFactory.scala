@@ -1,13 +1,13 @@
-package com.sudoku.utils
+package com.sudoku.factories
 
 import com.sudoku.models.{SudokuBoard, SudokuCell}
 import zio.ZIO
 
-object BoardGeneratorUtil {
-  def generateFullBoardWithCustomElementOnIndex(item: SudokuCell, inputColumn: Int, inputRow: Int): ZIO[Any, Nothing, SudokuBoard] =  {
+object SudokuBoardFactory {
+  def generateFullBoardWithCustomElementOnIndex(item: SudokuCell, inputColumn: Int, inputRow: Int): ZIO[Any, Nothing, SudokuBoard] = {
     ZIO.succeed(SudokuBoard(((0 to 8) map { column =>
       ((0 to 8) map { row =>
-        if(column == inputColumn && row == inputRow)
+        if (column == inputColumn && row == inputRow)
           item
         else
           SudokuCell(Some(1))
@@ -32,5 +32,4 @@ object BoardGeneratorUtil {
 
 
   }
-
 }

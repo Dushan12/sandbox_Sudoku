@@ -1,10 +1,12 @@
 package com.sudoku.utils.printutil
 
+import com.sudoku.models.SudokuBoard
 import com.sudoku.services.ValidationService
 import com.sudoku.services.validationservice.GetQuadrantTest.{suite, test}
-import com.sudoku.utils.{JsonUtils, PrintUtil}
+import com.sudoku.utils.PrintUtil
 import zio.test.*
 import zio.{Console, ZIO, *}
+import zio.json.*
 
 object GenerateAsciiBoardTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
@@ -13,7 +15,7 @@ object GenerateAsciiBoardTest extends ZIOSpecDefault {
       test("Generate ascii text for printing of the board") {
         for {
           inputString <- ZIO.succeed("""{"items":[[{"value":9},{"value":6},{"value":5},{"value":9},{"value":8},{"value":1},{"value":7},{"value":6},{"value":9}],[{"value":4},{"value":6},{"value":2},{"value":3},{"value":6},{"value":9},{"value":8},{"value":8},{"value":6}],[{"value":8},{"value":2},{"value":9},{"value":4},{"value":7},{"value":3},{"value":2},{"value":3},{"value":3}],[{"value":2},{"value":3},{"value":6},{"value":9},{"value":3},{"value":1},{"value":9},{"value":7},{"value":3}],[{"value":1},{"value":4},{"value":6},{"value":5},{"value":8},{"value":9},{"value":7},{"value":8},{"value":1}],[{"value":2},{"value":9},{"value":8},{"value":6},{"value":5},{"value":8},{"value":2},{"value":4},{"value":6}],[{"value":4},{"value":9},{"value":6},{"value":8},{"value":6},{"value":9},{"value":9},{"value":6},{"value":5}],[{"value":9},{"value":5},{"value":8},{"value":2},{"value":2},{"value":7},{"value":1},{"value":2},{"value":2}],[{"value":5},{"value":3},{"value":1},{"value":7},{"value":3},{"value":2},{"value":8},{"value":6},{"value":1}]]}""".stripMargin)
-          sudokuBoardParsed <- JsonUtils.fromJson(inputString)
+          sudokuBoardParsed <- ZIO.fromEither(inputString.fromJson[SudokuBoard])
           actualText <- PrintUtil.generateAsciiBoard(sudokuBoardParsed)
           _ <- Console.printLine(actualText)
           actual <- TestConsole.output

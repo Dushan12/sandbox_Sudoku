@@ -3,7 +3,6 @@ package com.sudoku.services
 import com.sudoku.enumerations.QuadrantsEnum
 import com.sudoku.enumerations.QuadrantsEnum._
 import com.sudoku.models.{SudokuBoard, SudokuCell}
-import com.sudoku.utils.JsonUtils
 import zio.{Runtime, Unsafe, ZIO}
 
 object ValidationService {

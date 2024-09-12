@@ -1,11 +1,11 @@
 package com.sudoku.services.validationservice
 
-import com.sudoku.models.SudokuCell
+import com.sudoku.models.{SudokuBoard, SudokuCell}
 import com.sudoku.services.ValidationService
-import com.sudoku.utils.BoardGeneratorUtil.*
-import com.sudoku.utils.JsonUtils
+import com.sudoku.factories.SudokuBoardFactory.*
 import zio.test.*
 import zio.{Scope, ZIO}
+import zio.json.*
 
 object IsFilledTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
@@ -36,7 +36,7 @@ object IsFilledTest extends ZIOSpecDefault {
                                  |[{},{"value":2},{"value":7},{"value":3},{},{"value":1},{},{},{"value":9}],
                                  |[{},{"value":4},{"value":9},{"value":7},{},{},{"value":8},{"value":3},{}]
                                  |]}""".stripMargin)
-          inputBoard <- JsonUtils.fromJson(input)
+          inputBoard <- ZIO.fromEither(input.fromJson[SudokuBoard])
           isSolved <- target.isFilled(inputBoard)
         } yield assertTrue(!isSolved)
       }

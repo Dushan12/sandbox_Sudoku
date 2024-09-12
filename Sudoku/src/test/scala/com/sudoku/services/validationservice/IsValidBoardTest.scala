@@ -1,9 +1,10 @@
 package com.sudoku.services.validationservice
 
+import com.sudoku.models.SudokuBoard
 import com.sudoku.services.ValidationService
-import com.sudoku.utils.JsonUtils
 import zio.test.*
 import zio.{Console, Scope, ZIO}
+import zio.json.*
 
 object IsValidBoardTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
@@ -23,7 +24,7 @@ object IsValidBoardTest extends ZIOSpecDefault {
                                  |[{},{"value":4},{"value":9},{"value":7},{},{},{"value":8},{"value":3},{}]
                                  |]}""".stripMargin)
 
-          input <- JsonUtils.fromJson(inputStr)
+          input <- ZIO.fromEither(inputStr.fromJson[SudokuBoard])
           actual <- target.isValidBoard(input)
         } yield assertTrue(actual)
       },
@@ -41,7 +42,7 @@ object IsValidBoardTest extends ZIOSpecDefault {
                                  |[{},{"value":2},{"value":7},{"value":3},{},{"value":1},{},{},{"value":9}],
                                  |[{},{"value":4},{"value":9},{"value":7},{},{},{"value":8},{"value":3},{}]
                                  |]}""".stripMargin)
-          input <- JsonUtils.fromJson(inputStr)
+          input <- ZIO.fromEither(inputStr.fromJson[SudokuBoard])
           actual <- target.isValidBoard(input)
           _ <- Console.printLine(actual)
         } yield assertTrue(!actual)

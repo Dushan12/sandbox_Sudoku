@@ -1,7 +1,9 @@
+import com.sudoku.models.SudokuBoard
 import com.sudoku.services.ValidationService
-import com.sudoku.utils.{BoardGeneratorUtil, JsonUtils, PrintUtil}
+import com.sudoku.utils.PrintUtil
 import zio.*
 import zio.http.*
+import zio.json.*
 
 object main extends ZIOAppDefault {
 
@@ -18,7 +20,7 @@ object main extends ZIOAppDefault {
   private def validateRequestHandler(req: Request): ZIO[Any, Nothing, Response] = {
     val checkBoardValidity: ZIO[Any, String, Boolean] = (for {
       bodyStr <- req.body.asString.mapError(_.getMessage)
-      parseBodyAsSudokuBoard <- JsonUtils.fromJson(bodyStr)
+      parseBodyAsSudokuBoard <- ZIO.fromEither(bodyStr.fromJson[SudokuBoard])
       isValidBoard <- ValidationService.isValidBoard(parseBodyAsSudokuBoard)
     } yield(isValidBoard))
 
