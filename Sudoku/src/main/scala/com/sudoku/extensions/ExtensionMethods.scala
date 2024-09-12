@@ -14,6 +14,11 @@ extension (sudokuBoard: SudokuBoard)
     }))
   }
 
+extension (input: List[SudokuCell])
+  def getValues: List[Int] = {
+    input.map(_.value).collect { case Some(x) => x }
+  }
+
 extension (sudokuBoard: SudokuBoard)
   def getColumns: ZIO[Any, Nothing, List[List[SudokuCell]]] = {
     ZIO.succeed(sudokuBoard.items)

@@ -22,8 +22,7 @@ object ValidationService {
   def isFilled(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     for {
       valid <- isValidFormat(sudokuBoard)
-      containsEmptyElements <- ZIO.succeed(sudokuBoard.items.flatten.exists(_.value.isEmpty))
-    } yield (valid && !containsEmptyElements)
+    } yield (valid && !sudokuBoard.items.flatten.exists(_.value.isEmpty))
   }
 
   def isValidFormat(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
@@ -33,7 +32,7 @@ object ValidationService {
         sudokuBoard.items.length != 9 ||
           sudokuBoard.items.exists { rows =>
             rows.length != 9 ||
-              rows.map(_.value).collect { case Some(x) => x }.exists { cellValue =>
+              rows.getValues.exists { cellValue =>
                 cellValue < 1 || cellValue > 9
               }
           }
@@ -46,7 +45,7 @@ object ValidationService {
       columns <- sudokuBoard.getColumns
     } yield {
       columns.map { columns =>
-        columns.map(_.value).collect { case Some(value) => value }
+        columns.getValues
       }.exists { columnValues =>
         columnValues.distinct.length != columnValues.length
       }
@@ -64,7 +63,7 @@ object ValidationService {
     for {
       quadrants <- ZIO.collectAll(QuadrantsEnum.values.map(sudokuBoard.getQuadrant))
       existsDuplicateInQuadrant <- ZIO.succeed(quadrants
-        .map(_.flatten.map(_.value).collect { case Some(value) => value })
+        .map(_.flatten.getValues)
         .map { exists => exists.length != exists.distinct.length })
     } yield {
       existsDuplicateInQuadrant.forall(identity)
