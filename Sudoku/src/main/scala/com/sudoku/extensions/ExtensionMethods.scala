@@ -23,12 +23,15 @@ extension (sudokuBoard: SudokuBoard)
   def getColumns: ZIO[Any, Nothing, List[List[SudokuCell]]] = {
     ZIO.succeed(sudokuBoard.items)
   }
+  
+extension (sudokuBoard: SudokuBoard)
+  def allCellsHaveValues: Boolean = {
+    sudokuBoard.items.flatten.exists(_.value.isEmpty)
+  }
 
 extension (sudokuBoard: SudokuBoard)
   def getRows: ZIO[Any, Nothing, List[List[SudokuCell]]] = {
-    for {
-      invertedBoard <- sudokuBoard.invertColumnsAndRows
-    } yield (invertedBoard.items)
+    sudokuBoard.invertColumnsAndRows.map(_.items)
   }
 
 extension (sudokuBoard: SudokuBoard)

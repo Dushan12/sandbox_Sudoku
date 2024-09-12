@@ -10,34 +10,25 @@ object ValidationService {
 
   def isValidBoard(board: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     for {
-      isValidFormat <- ValidationService.isValidFormat(board)
-      hasDuplicatesInRows <- ValidationService.duplicatesInRows(board)
-      hasDuplicatesInColumns <- ValidationService.duplicatesInColumns(board)
-      hasDuplicatesInQuadrants <- ValidationService.duplicatesInQuadrants(board)
+      isValidFormat <- isValidFormat(board)
+      hasDuplicatesInRows <- duplicatesInRows(board)
+      hasDuplicatesInColumns <- duplicatesInColumns(board)
+      hasDuplicatesInQuadrants <- duplicatesInQuadrants(board)
     } yield {
       isValidFormat && !hasDuplicatesInRows && !hasDuplicatesInColumns && !hasDuplicatesInQuadrants
     }
   }
 
-  def isFilled(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
-    for {
-      valid <- isValidFormat(sudokuBoard)
-    } yield (valid && !sudokuBoard.items.flatten.exists(_.value.isEmpty))
-  }
-
   def isValidFormat(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
-
-    for {
-      invalidBoard <- ZIO.succeed(
-        sudokuBoard.items.length != 9 ||
-          sudokuBoard.items.exists { rows =>
-            rows.length != 9 ||
-              rows.getValues.exists { cellValue =>
-                cellValue < 1 || cellValue > 9
-              }
-          }
+    ZIO.succeed(
+        sudokuBoard.items.length == 9 &&
+          sudokuBoard.items.map { rows =>
+            rows.length == 9 &&
+              rows.getValues.map { cellValue =>
+                cellValue >= 1 || cellValue <= 9
+              }.forall(identity)
+          }.forall(identity)
       )
-    } yield (!invalidBoard)
   }
 
   private def duplicatesInColumns(sudokuBoard: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
