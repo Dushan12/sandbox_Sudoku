@@ -1,6 +1,5 @@
 import com.sudoku.models.SudokuBoard
 import com.sudoku.services.ValidationService
-import com.sudoku.utils.PrintUtil
 import zio.*
 import zio.http.*
 import zio.json.*

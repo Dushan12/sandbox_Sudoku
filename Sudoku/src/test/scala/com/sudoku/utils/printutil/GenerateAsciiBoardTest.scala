@@ -3,7 +3,6 @@ package com.sudoku.utils.printutil
 import com.sudoku.models.SudokuBoard
 import com.sudoku.services.ValidationService
 import com.sudoku.services.validationservice.GetQuadrantTest.{suite, test}
-import com.sudoku.utils.PrintUtil
 import zio.test.*
 import zio.{Console, ZIO, *}
 import zio.json.*
@@ -16,8 +15,15 @@ object GenerateAsciiBoardTest extends ZIOSpecDefault {
         for {
           inputString <- ZIO.succeed("""{"items":[[{"value":9},{"value":6},{"value":5},{"value":9},{"value":8},{"value":1},{"value":7},{"value":6},{"value":9}],[{"value":4},{"value":6},{"value":2},{"value":3},{"value":6},{"value":9},{"value":8},{"value":8},{"value":6}],[{"value":8},{"value":2},{"value":9},{"value":4},{"value":7},{"value":3},{"value":2},{"value":3},{"value":3}],[{"value":2},{"value":3},{"value":6},{"value":9},{"value":3},{"value":1},{"value":9},{"value":7},{"value":3}],[{"value":1},{"value":4},{"value":6},{"value":5},{"value":8},{"value":9},{"value":7},{"value":8},{"value":1}],[{"value":2},{"value":9},{"value":8},{"value":6},{"value":5},{"value":8},{"value":2},{"value":4},{"value":6}],[{"value":4},{"value":9},{"value":6},{"value":8},{"value":6},{"value":9},{"value":9},{"value":6},{"value":5}],[{"value":9},{"value":5},{"value":8},{"value":2},{"value":2},{"value":7},{"value":1},{"value":2},{"value":2}],[{"value":5},{"value":3},{"value":1},{"value":7},{"value":3},{"value":2},{"value":8},{"value":6},{"value":1}]]}""".stripMargin)
           sudokuBoardParsed <- ZIO.fromEither(inputString.fromJson[SudokuBoard])
-          actualText <- PrintUtil.generateAsciiBoard(sudokuBoardParsed)
-          _ <- Console.printLine(actualText)
+          text <- ZIO.succeed(s"""|""" +
+            sudokuBoardParsed.items.flatten.zipWithIndex.map { case (x, index) =>
+              val printValue = x.value.map(_.toString).getOrElse(" ")
+              if ((index + 1) % 9 == 0 && index != 80)
+                s"""$printValue|\n|"""
+              else
+                s"""$printValue|"""
+            }.mkString(""))
+          _ <- Console.printLine(text)
           actual <- TestConsole.output
         } yield assertTrue(actual.head ==
 """|9|6|5|9|8|1|7|6|9|

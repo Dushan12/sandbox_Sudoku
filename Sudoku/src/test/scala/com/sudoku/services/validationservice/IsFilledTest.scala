@@ -2,7 +2,7 @@ package com.sudoku.services.validationservice
 
 import com.sudoku.models.{SudokuBoard, SudokuCell}
 import com.sudoku.services.ValidationService
-import com.sudoku.factories.SudokuBoardFactory.*
+import com.sudoku.generators.SudokuBoardGenerator.*
 import zio.test.*
 import zio.{Scope, ZIO}
 import zio.json.*

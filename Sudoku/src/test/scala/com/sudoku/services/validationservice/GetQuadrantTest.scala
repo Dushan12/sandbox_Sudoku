@@ -1,11 +1,11 @@
 package com.sudoku.services.validationservice
 
 import com.sudoku.enumerations.QuadrantsEnum.*
+import com.sudoku.extensions.*
 import com.sudoku.models.{SudokuBoard, SudokuCell}
-import com.sudoku.services.ValidationService
-import zio.test.*
 import zio.*
 import zio.json.*
+import zio.test.*
 
 object GetQuadrantTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
@@ -16,7 +16,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return first quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant1)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant1)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(9)), SudokuCell(Some(6)), SudokuCell(Some(5))), List(SudokuCell(Some(4)), SudokuCell(Some(6)), SudokuCell(Some(2))), List(SudokuCell(Some(8)), SudokuCell(Some(2)), SudokuCell(Some(9))))
           )
@@ -25,7 +25,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return second quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant2)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant2)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(9)), SudokuCell(Some(8)), SudokuCell(Some(1))), List(SudokuCell(Some(3)), SudokuCell(Some(6)), SudokuCell(Some(9))), List(SudokuCell(Some(4)), SudokuCell(Some(7)), SudokuCell(Some(3))))
           )
@@ -35,7 +35,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return third quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant3)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant3)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(7)), SudokuCell(Some(6)), SudokuCell(Some(9))), List(SudokuCell(Some(8)), SudokuCell(Some(8)), SudokuCell(Some(6))), List(SudokuCell(Some(2)), SudokuCell(Some(3)), SudokuCell(Some(3))))
           )
@@ -46,7 +46,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return fourth quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant4)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant4)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(2)), SudokuCell(Some(3)), SudokuCell(Some(6))), List(SudokuCell(Some(1)), SudokuCell(Some(4)), SudokuCell(Some(6))), List(SudokuCell(Some(2)), SudokuCell(Some(9)), SudokuCell(Some(8))))
           )
@@ -57,7 +57,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return fifth quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant5)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant5)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(9)), SudokuCell(Some(3)), SudokuCell(Some(1))), List(SudokuCell(Some(5)), SudokuCell(Some(8)), SudokuCell(Some(9))), List(SudokuCell(Some(6)), SudokuCell(Some(5)), SudokuCell(Some(8))))
           )
@@ -67,7 +67,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return sixth quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant6)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant6)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(9)), SudokuCell(Some(7)), SudokuCell(Some(3))), List(SudokuCell(Some(7)), SudokuCell(Some(8)), SudokuCell(Some(1))), List(SudokuCell(Some(2)), SudokuCell(Some(4)), SudokuCell(Some(6))))
           )
@@ -77,7 +77,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return seventh quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant7)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant7)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(4)), SudokuCell(Some(9)), SudokuCell(Some(6))), List(SudokuCell(Some(9)), SudokuCell(Some(5)), SudokuCell(Some(8))), List(SudokuCell(Some(5)), SudokuCell(Some(3)), SudokuCell(Some(1))))
           )
@@ -88,7 +88,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return eight quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant8)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant8)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(8)), SudokuCell(Some(6)), SudokuCell(Some(9))), List(SudokuCell(Some(2)), SudokuCell(Some(2)), SudokuCell(Some(7))), List(SudokuCell(Some(7)), SudokuCell(Some(3)), SudokuCell(Some(2))))
           )
@@ -99,7 +99,7 @@ object GetQuadrantTest extends ZIOSpecDefault {
       test("Return ninth quadrant") {
         for {
           sudokuBoardParsed <- sudokuBoardParsedFromJson
-          quadrant <- ValidationService.getQuadrant(sudokuBoardParsed, Quadrant9)
+          quadrant <- sudokuBoardParsed.getQuadrant(Quadrant9)
           expected <- ZIO.succeed(
             List(List(SudokuCell(Some(9)), SudokuCell(Some(6)), SudokuCell(Some(5))), List(SudokuCell(Some(1)), SudokuCell(Some(2)), SudokuCell(Some(2))), List(SudokuCell(Some(8)), SudokuCell(Some(6)), SudokuCell(Some(1))))
           )

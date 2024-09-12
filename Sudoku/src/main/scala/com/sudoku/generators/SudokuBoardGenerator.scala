@@ -1,9 +1,9 @@
-package com.sudoku.factories
+package com.sudoku.generators
 
 import com.sudoku.models.{SudokuBoard, SudokuCell}
 import zio.ZIO
 
-object SudokuBoardFactory {
+object SudokuBoardGenerator {
   def generateFullBoardWithCustomElementOnIndex(item: SudokuCell, inputColumn: Int, inputRow: Int): ZIO[Any, Nothing, SudokuBoard] = {
     ZIO.succeed(SudokuBoard(((0 to 8) map { column =>
       ((0 to 8) map { row =>

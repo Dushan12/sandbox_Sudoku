@@ -1,7 +1,7 @@
 package com.sudoku.utils.jsonutils
 
 import com.sudoku.models.SudokuBoard
-import com.sudoku.factories.SudokuBoardFactory.*
+import com.sudoku.generators.SudokuBoardGenerator.*
 import zio.{Scope, ZIO}
 import zio.test.*
 import zio.json.*
