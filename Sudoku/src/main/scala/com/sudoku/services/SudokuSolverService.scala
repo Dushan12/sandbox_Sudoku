@@ -16,7 +16,7 @@ object SudokuSolverService {
       case _: Solved =>
         ZIO.succeed(true, board)
       case notSolved: NotSolved =>
-        for {
+        (for {
           possibleNextValues <- board.getAllPossibleSolutionsForCell(notSolved.nextEmptyCell)
           results <- ZIO.collectAll(possibleNextValues.map { nextValue =>
             for {
@@ -30,12 +30,12 @@ object SudokuSolverService {
             }
           })
           mapPossibleResult <- ZIO.collectAll(results)
-        } yield {
+        } yield mapPossibleResult).map { mapPossibleResult =>
           val possibleSolutions = mapPossibleResult.find(_._1).toList
           if(possibleSolutions.length > 1)
             (false, board)
           else {
-            possibleSolutions.findLast(_._1).getOrElse {
+            possibleSolutions.headOption.getOrElse {
               (false, board)
             }
           }
