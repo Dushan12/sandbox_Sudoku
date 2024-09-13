@@ -8,14 +8,11 @@ object main extends ZIOAppDefault {
 
   private val routes: Routes[Any, Nothing] =
     Routes(
-      Method.GET / "greet" -> handler { (req: Request) => greet(req) },
       Method.POST / "validate" -> handler { (req: Request) => validateRequestHandler(req) },
       Method.POST / "solve" -> handler { (req: Request) => solveRequestHandler(req) }
     )
 
   def run: ZIO[ZIOAppArgs & Scope, Any, Any] = Server.serve(routes).provide(Server.default)
-
-  private def greet(req: Request) = Response.text("Greetings at your service")
 
   private def solveRequestHandler(req: Request): ZIO[Any, Nothing, Response] = {
     (for {
