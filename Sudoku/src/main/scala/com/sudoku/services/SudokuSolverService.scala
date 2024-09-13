@@ -18,9 +18,9 @@ object SudokuSolverService {
       case Solved =>
         ZIO.succeed(Solved, board)
       case notSolved: NotSolved =>
-        (for {
+        for {
           possibleNextValues <- board.getAllPossibleSolutionsForCell(notSolved.nextEmptyCell)
-          results <- ZIO.collectAll(possibleNextValues.map { nextValue =>
+          possibleSolutions <- ZIO.collectAll(possibleNextValues.map { nextValue =>
             for {
               possibleNextStep <- board.putElementOn(notSolved.nextEmptyCell, SudokuCell(Some(nextValue)))
               isValidNextStepSolution <- areNumbersValid(possibleNextStep)
@@ -31,22 +31,20 @@ object SudokuSolverService {
                 ZIO.succeed(Invalid, board)
             }
           })
-          mapPossibleResult <- ZIO.collectAll(results)
-        } yield mapPossibleResult).map { mapPossibleResult =>
-          val possibleSolutions = mapPossibleResult
-            .find { case (boardState, _) =>
-              boardState == Solved
-            }.toList
-
-          if(possibleSolutions.length > 1) {
+          filterValidSolutions <- ZIO.collectAll(possibleSolutions).map(x => x.find {case (boardState, _) =>
+            boardState == Solved
+          }.toList)
+          hasMoreThanOneSolution <- ZIO.succeed(filterValidSolutions.length > 1)
+          getValidSolution <- ZIO.succeed(filterValidSolutions.headOption.map {
+            result =>
+              if(hasMoreThanOneSolution)
+                (Invalid, board)
+              else
+                result
+          }.getOrElse {
             (Invalid, board)
-          } else {
-            possibleSolutions.headOption.getOrElse {
-              (Invalid, board)
-            }
-          }
-
-        }
+          })
+        } yield (getValidSolution)
     }
   }
 
