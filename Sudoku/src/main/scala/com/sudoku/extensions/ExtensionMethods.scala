@@ -2,7 +2,7 @@ package com.sudoku.extensions
 
 import com.sudoku.enumerations.QuadrantsEnum
 import com.sudoku.enumerations.QuadrantsEnum.*
-import com.sudoku.models.{SudokuBoard, SudokuCell}
+import com.sudoku.models.{SudokuBoard, SudokuCell, SudokuCellMeta}
 import zio.ZIO
 
 extension (sudokuBoard: SudokuBoard)
@@ -14,6 +14,27 @@ extension (sudokuBoard: SudokuBoard)
     }))
   }
 
+extension (sudokuBoard: SudokuBoard)
+  def putElementOn(cellMeta: SudokuCellMeta, sudokuCell: SudokuCell): ZIO[Any, Nothing, SudokuBoard] = {
+    ZIO.succeed(SudokuBoard(sudokuBoard.items.zipWithIndex.map { case (rows, rowIndex) =>
+      rows.zipWithIndex.map { case (cell, colIndex) =>
+        if (cellMeta.rowIndex == rowIndex && cellMeta.colIndex == colIndex)
+          sudokuCell
+        else
+          cell
+      }
+    }))
+  }
+
+extension (sudokuBoard: SudokuBoard)
+  def nextEmptyCell: ZIO[Any, Nothing, Option[SudokuCellMeta]] = {
+    ZIO.succeed(sudokuBoard.items.zipWithIndex.flatMap { case (rows, rowIndex) =>
+      rows.zipWithIndex.map { case (cell, colIndex) =>
+        (cell.value, SudokuCellMeta(rowIndex,colIndex))
+      }
+    }.find(_._1.isEmpty).map(_._2))
+  }
+
 extension (input: List[SudokuCell])
   def getValues: List[Int] = {
     input.map(_.value).collect { case Some(x) => x }
@@ -23,10 +44,10 @@ extension (sudokuBoard: SudokuBoard)
   def getColumns: ZIO[Any, Nothing, List[List[SudokuCell]]] = {
     ZIO.succeed(sudokuBoard.items)
   }
-  
+
 extension (sudokuBoard: SudokuBoard)
   def allCellsHaveValues: Boolean = {
-    sudokuBoard.items.flatten.exists(_.value.isEmpty)
+    sudokuBoard.items.flatten.map(_.value.nonEmpty).forall(identity)
   }
 
 extension (sudokuBoard: SudokuBoard)

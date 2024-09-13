@@ -8,14 +8,22 @@ import com.sudoku.extensions._
 
 object ValidationService {
 
-  def isValidBoard(board: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
+  def areNumbersValid(board: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     for {
-      isValidFormat <- isValidFormat(board)
       hasDuplicatesInRows <- duplicatesInRows(board)
       hasDuplicatesInColumns <- duplicatesInColumns(board)
       hasDuplicatesInQuadrants <- duplicatesInQuadrants(board)
     } yield {
-      isValidFormat && !hasDuplicatesInRows && !hasDuplicatesInColumns && !hasDuplicatesInQuadrants
+      !hasDuplicatesInRows && !hasDuplicatesInColumns && !hasDuplicatesInQuadrants
+    }
+  }
+
+  def isValidBoard(board: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
+    for {
+      isValidFormat <- isValidFormat(board)
+      areNumbersValid <- areNumbersValid(board)
+    } yield {
+      isValidFormat && areNumbersValid
     }
   }
 
