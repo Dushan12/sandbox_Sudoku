@@ -2,11 +2,7 @@ package com.sudoku.enumerations
 
 import com.sudoku.models.SudokuCellMeta
 
+case class Solved()
+case class Invalid()
+case class NotSolved(nextEmptyCell: SudokuCellMeta)
 
-
-case class BSolved()
-case class BInvalid()
-case class BPartiallySolved(nextCell: SudokuCellMeta)
-
-enum BoardState:
-  case Solved, PartiallySolved, Invalid

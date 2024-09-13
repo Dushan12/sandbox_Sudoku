@@ -1,7 +1,7 @@
 package com.sudoku.services.validationservice
 
 import com.sudoku.enumerations.QuadrantsEnum.*
-import com.sudoku.extensions.*
+import com.sudoku.extensions.sudokuboard.*
 import com.sudoku.models.{SudokuBoard, SudokuCell}
 import zio.*
 import zio.json.*

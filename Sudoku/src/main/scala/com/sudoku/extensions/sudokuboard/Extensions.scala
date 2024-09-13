@@ -1,9 +1,10 @@
-package com.sudoku.extensions
+package com.sudoku.extensions.sudokuboard
 
 import com.sudoku.enumerations.QuadrantsEnum
 import com.sudoku.enumerations.QuadrantsEnum.*
 import com.sudoku.models.{SudokuBoard, SudokuCell, SudokuCellMeta}
 import zio.ZIO
+import com.sudoku.extensions.sudokucellmeta._
 
 extension (sudokuBoard: SudokuBoard)
   def invertColumnsAndRows: ZIO[Any, Nothing, SudokuBoard] = {
@@ -12,6 +13,31 @@ extension (sudokuBoard: SudokuBoard)
         columns(index)
       }
     }))
+  }
+
+extension (sudokuBoard: SudokuBoard)
+  def getRowValues(cell: SudokuCellMeta): ZIO[Any, Nothing, List[SudokuCell]] = {
+    sudokuBoard.invertColumnsAndRows.map { inverted =>
+      inverted.items(cell.rowIndex)
+    }
+  }
+
+extension (sudokuBoard: SudokuBoard)
+  def getColumnValues(cell: SudokuCellMeta): ZIO[Any, Nothing, List[SudokuCell]] = {
+    ZIO.succeed(sudokuBoard.items(cell.colIndex))
+  }
+
+
+extension (sudokuBoard: SudokuBoard)
+  def getAllPossibleSolutionsForCell(cell: SudokuCellMeta): ZIO[Any, Nothing, List[Int]] = {
+    for {
+      columnValues <- sudokuBoard.getColumnValues(cell)
+      rowValues <- sudokuBoard.getRowValues(cell)
+      quadrant <- cell.getQuadrantForCellIndex
+      quadrantValues <- sudokuBoard.getQuadrant(quadrant)
+    } yield {
+      (1 to 9).toList.diff(columnValues ++ rowValues ++ quadrantValues)
+    }
   }
 
 extension (sudokuBoard: SudokuBoard)
@@ -30,14 +56,9 @@ extension (sudokuBoard: SudokuBoard)
   def nextEmptyCell: ZIO[Any, Nothing, Option[SudokuCellMeta]] = {
     ZIO.succeed(sudokuBoard.items.zipWithIndex.flatMap { case (rows, rowIndex) =>
       rows.zipWithIndex.map { case (cell, colIndex) =>
-        (cell.value, SudokuCellMeta(rowIndex,colIndex))
+        (cell.value, SudokuCellMeta(rowIndex, colIndex))
       }
     }.find(_._1.isEmpty).map(_._2))
-  }
-
-extension (input: List[SudokuCell])
-  def getValues: List[Int] = {
-    input.map(_.value).collect { case Some(x) => x }
   }
 
 extension (sudokuBoard: SudokuBoard)

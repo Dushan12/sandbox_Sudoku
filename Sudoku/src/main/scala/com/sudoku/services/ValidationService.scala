@@ -4,7 +4,8 @@ import com.sudoku.*
 import com.sudoku.enumerations.QuadrantsEnum
 import com.sudoku.models.{SudokuBoard, SudokuCell}
 import zio.{Unsafe, ZIO}
-import com.sudoku.extensions._
+import com.sudoku.extensions.sudokuboard.*
+import com.sudoku.extensions.sudokucell.*
 
 object ValidationService {
 
