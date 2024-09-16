@@ -3,6 +3,8 @@ package com.sudoku.services.sudokusolver
 import com.sudoku.models.SudokuBoard
 import com.sudoku.services.SudokuSolverService
 import com.sudoku.services.validationservice.IsValidFormatTest.suite
+import com.sudoku.utils.SudokuPrint
+import com.sudoku.utils.printutil.GenerateAsciiBoardTest
 import zio.json.*
 import zio.test.*
 import zio.{Console, Scope, ZIO}
@@ -26,30 +28,13 @@ object SolveTest  extends ZIOSpecDefault {
               |[{},{"value":4},{"value":9},{"value":7},{},{},{"value":8},{"value":3},{}]
               |]}""".stripMargin)
           inputBoard <- ZIO.fromEither(input.fromJson[SudokuBoard])
-          textInput <- ZIO.succeed(
-            s"""|""" +
-              inputBoard.items.flatten.zipWithIndex.map { case (x, index) =>
-                val printValue = x.value.map(_.toString).getOrElse(" ")
-                if ((index + 1) % 9 == 0 && index != 80)
-                  s"""$printValue|\n|"""
-                else
-                  s"""$printValue|"""
-              }.mkString(""))
+          textInput <- SudokuPrint.generateAscii(inputBoard)
           _ <- Console.printLine(textInput)
           _ <- Console.printLine("*" * 20)
           startTime <- ZIO.succeed(System.currentTimeMillis())
-          solvedBoard <- SudokuSolverService.solve(inputBoard)
+          (_, solvedBoard) <- SudokuSolverService.solve(inputBoard)
           endTime <- ZIO.succeed(System.currentTimeMillis())
-
-          text <- ZIO.succeed(
-            s"""|""" +
-              solvedBoard._2.items.flatten.zipWithIndex.map { case (x, index) =>
-                val printValue = x.value.map(_.toString).getOrElse(" ")
-                if ((index + 1) % 9 == 0 && index != 80)
-                  s"""$printValue|\n|"""
-                else
-                  s"""$printValue|"""
-              }.mkString(""))
+          text <- SudokuPrint.generateAscii(solvedBoard)
           _ <- Console.printLine(text)
           _ <- Console.printLine("*" * 20)
           duration <- Console.printLine("Duration " + (endTime - startTime) + " ms")
