@@ -20,7 +20,7 @@ object SudokuSolverService {
       case notSolved: NotSolved =>
         for {
           possibleNextValues <- board.getAllPossibleSolutionsForCell(notSolved.nextEmptyCell)
-          possibleSolutions <- ZIO.collectAllPar(possibleNextValues.map { nextValue =>
+          possibleSolutions <- ZIO.collectAll(possibleNextValues.map { nextValue =>
             for {
               possibleNextStep <- board.putElementOn(notSolved.nextEmptyCell, SudokuCell(Some(nextValue)))
               isValidNextStepSolution <- areNumbersValid(possibleNextStep)
