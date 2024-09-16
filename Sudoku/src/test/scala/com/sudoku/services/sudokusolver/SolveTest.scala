@@ -2,7 +2,7 @@ package com.sudoku.services.sudokusolver
 
 import com.sudoku.models.SudokuBoard
 import com.sudoku.services.SudokuSolverService
-import com.sudoku.services.validationservice.IsValidFormatTest.suite
+import com.sudoku.services.sudokuvalidationservice.IsValidFormatTest.suite
 import com.sudoku.utils.SudokuPrint
 import com.sudoku.utils.printutil.GenerateAsciiBoardTest
 import zio.json.*

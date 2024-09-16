@@ -1,16 +1,16 @@
 package com.sudoku.extensions.sudokuboard
 
 import com.sudoku.models.{SudokuBoard, SudokuCellMeta}
-import com.sudoku.services.ValidationService
-import com.sudoku.services.validationservice.GetQuadrantTest.{suite, test}
+import com.sudoku.services.SudokuValidationService
+import com.sudoku.services.sudokuvalidationservice.GetQuadrantTest.{suite, test}
 import zio.test.*
-import zio.{Console, ZIO, *}
+import zio.*
 import zio.json.*
 import com.sudoku.extensions.*
 
 object NextEmptyCellTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
-    val target = ValidationService
+    val target = SudokuValidationService
     suite("Sudoku -> SudokuBoard -> Extensions -> nextEmptyCell -> Specs")(
       test("Return cell metadata for the next empty cell") {
         for {

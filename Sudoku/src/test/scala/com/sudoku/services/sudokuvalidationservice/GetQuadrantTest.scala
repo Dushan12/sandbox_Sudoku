@@ -1,4 +1,4 @@
-package com.sudoku.services.validationservice
+package com.sudoku.services.sudokuvalidationservice
 
 import com.sudoku.enumerations.QuadrantsEnum.*
 import com.sudoku.extensions.sudokuboard.*

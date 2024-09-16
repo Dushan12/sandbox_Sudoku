@@ -6,7 +6,7 @@ import com.sudoku.enumerations.{BoardStateActive, BoardStateFinite}
 import com.sudoku.extensions.*
 import com.sudoku.extensions.sudokuboard.*
 import com.sudoku.models.{SudokuBoard, SudokuCell}
-import com.sudoku.services.ValidationService.*
+import com.sudoku.services.SudokuValidationService.*
 import zio.{Unsafe, ZIO}
 
 object SudokuSolverService {

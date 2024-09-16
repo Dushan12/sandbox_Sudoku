@@ -1,14 +1,14 @@
-package com.sudoku.services.validationservice
+package com.sudoku.services.sudokuvalidationservice
 
 import com.sudoku.models.SudokuBoard
-import com.sudoku.services.ValidationService
+import com.sudoku.services.SudokuValidationService
 import zio.test.*
 import zio.{Console, Scope, ZIO}
 import zio.json.*
 
 object IsValidBoardTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
-    val target = ValidationService
+    val target = SudokuValidationService
     suite("Sudoku -> Validate Service -> isValidBoard -> Specs")(
       test("return true because the board is valid") {
         for {

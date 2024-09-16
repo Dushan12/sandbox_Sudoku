@@ -1,7 +1,7 @@
 package com.sudoku.utils.jsonutils
 
 import com.sudoku.generators.SudokuBoardGenerator.*
-import com.sudoku.services.ValidationService
+import com.sudoku.services.SudokuValidationService
 import zio.ZIO
 import zio.test.*
 import zio.json.*
@@ -12,7 +12,7 @@ object ToJsonTest extends ZIOSpecDefault {
       test("Return json string from the sudoku board model") {
         for {
           input <- generateBoardWithAllValuesEqual(Some(2))
-          valid <- ValidationService.isValidFormat(input)
+          valid <- SudokuValidationService.isValidFormat(input)
           actual <-  ZIO.succeed(input.toJson) //JsonUtils.toJson(input)
         } yield {
           assertTrue(valid)
@@ -22,7 +22,7 @@ object ToJsonTest extends ZIOSpecDefault {
       test("Return json string from the sudoku empty board model") {
         for {
           input <- generateEmptyBoard()
-          valid <- ValidationService.isValidFormat(input)
+          valid <- SudokuValidationService.isValidFormat(input)
           actual <- ZIO.succeed(input.toJson)
         } yield {
           assertTrue(valid)

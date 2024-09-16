@@ -1,8 +1,8 @@
 package com.sudoku.utils.printutil
 
 import com.sudoku.models.SudokuBoard
-import com.sudoku.services.ValidationService
-import com.sudoku.services.validationservice.GetQuadrantTest.{suite, test}
+import com.sudoku.services.SudokuValidationService
+import com.sudoku.services.sudokuvalidationservice.GetQuadrantTest.{suite, test}
 import com.sudoku.utils.SudokuPrint
 import zio.test.*
 import zio.{Console, ZIO, *}
@@ -10,7 +10,7 @@ import zio.json.*
 
 object GenerateAsciiBoardTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
-    val target = ValidationService
+    val target = SudokuValidationService
     suite("Sudoku -> Print Util -> generateAsciiBoard -> Specs")(
       test("Generate ascii text for printing of the board") {
         for {

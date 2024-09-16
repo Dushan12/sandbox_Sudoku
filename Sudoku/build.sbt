@@ -18,7 +18,6 @@ val dependencies = Seq(
 libraryDependencies := dependencies
 
 lazy val root = (project in file("."))
- // .dependencies(dependenciesMain)
   .settings(
     name := "Sudoku"
   )

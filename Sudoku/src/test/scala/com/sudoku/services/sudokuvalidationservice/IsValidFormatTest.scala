@@ -1,6 +1,6 @@
-package com.sudoku.services.validationservice
+package com.sudoku.services.sudokuvalidationservice
 
-import com.sudoku.services.ValidationService
+import com.sudoku.services.SudokuValidationService
 import com.sudoku.generators.SudokuBoardGenerator.*
 import com.sudoku.models.SudokuBoard
 import zio.test.*
@@ -9,7 +9,7 @@ import zio.json.*
 
 object IsValidFormatTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
-    val target = ValidationService
+    val target = SudokuValidationService
     suite("Sudoku -> Validate Service -> isValid -> Specs")(
      test("Return false when grid has less than 9 columns") {
         for {

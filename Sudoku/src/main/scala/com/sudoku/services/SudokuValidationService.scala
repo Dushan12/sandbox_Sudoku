@@ -7,7 +7,7 @@ import zio.{Unsafe, ZIO}
 import com.sudoku.extensions.sudokuboard.*
 import com.sudoku.extensions.sudokucell.*
 
-object ValidationService {
+object SudokuValidationService {
 
   def areNumbersValid(board: SudokuBoard): ZIO[Any, Nothing, Boolean] = {
     for {

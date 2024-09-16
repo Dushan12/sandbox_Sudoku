@@ -2,7 +2,7 @@ package com.sudoku.extensions.sudokuboard
 
 import com.sudoku.extensions.sudokuboard.NextEmptyCellTest.{suite, test}
 import com.sudoku.models.{SudokuBoard, SudokuCell, SudokuCellMeta}
-import com.sudoku.services.ValidationService
+import com.sudoku.services.SudokuValidationService
 import zio.{Scope, ZIO}
 import zio.test.{Spec, TestEnvironment, ZIOSpecDefault, assertTrue}
 import zio.json.*
@@ -10,7 +10,7 @@ import com.sudoku.extensions.*
 
 object PutElementOnTest extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
-    val target = ValidationService
+    val target = SudokuValidationService
     suite("Sudoku -> SudokuBoard -> Extensions -> nextEmptyCell -> Specs")(
       test("return board with element placed on position 0 2") {
         for {

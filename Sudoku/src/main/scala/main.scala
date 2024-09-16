@@ -1,7 +1,7 @@
 import com.sudoku.models.SudokuBoard
-import com.sudoku.services.{SudokuSolverService, ValidationService}
+import com.sudoku.services.{SudokuSolverService, SudokuValidationService}
 import zio.*
-import zio.http.{Method, *}
+import zio.http.*
 import zio.json.*
 
 object main extends ZIOAppDefault {
@@ -33,7 +33,7 @@ object main extends ZIOAppDefault {
     val checkBoardValidity: ZIO[Any, String, Boolean] = (for {
       bodyStr <- req.body.asString.mapError(_.getMessage)
       parseBodyAsSudokuBoard <- ZIO.fromEither(bodyStr.fromJson[SudokuBoard])
-      isValidBoard <- ValidationService.isValidBoard(parseBodyAsSudokuBoard)
+      isValidBoard <- SudokuValidationService.isValidBoard(parseBodyAsSudokuBoard)
     } yield(isValidBoard))
 
     checkBoardValidity.map { isValidBoard =>
