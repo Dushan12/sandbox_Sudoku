@@ -42,23 +42,32 @@ extension (sudokuBoard: SudokuBoard)
 
 extension (sudokuBoard: SudokuBoard)
   def putElementOn(cellMeta: SudokuCellMeta, sudokuCell: SudokuCell): ZIO[Any, Nothing, SudokuBoard] = {
-    ZIO.succeed(SudokuBoard(sudokuBoard.items.zipWithIndex.map { case (rows, rowIndex) =>
-      rows.zipWithIndex.map { case (cell, colIndex) =>
-        if (cellMeta.rowIndex == rowIndex && cellMeta.colIndex == colIndex)
-          sudokuCell
-        else
-          cell
-      }
-    }))
+    ZIO.succeed(
+      SudokuBoard(
+        sudokuBoard.items.patch(cellMeta.rowIndex,
+          List(
+            sudokuBoard.items(cellMeta.rowIndex).patch(
+            cellMeta.colIndex,
+            List(sudokuCell),
+            1)
+          ),
+          1)
+      )
+    )
   }
 
 extension (sudokuBoard: SudokuBoard)
   def nextEmptyCell: ZIO[Any, Nothing, Option[SudokuCellMeta]] = {
     ZIO.succeed(sudokuBoard.items.zipWithIndex.flatMap { case (rows, rowIndex) =>
       rows.zipWithIndex.map { case (cell, colIndex) =>
-        (cell.value, SudokuCellMeta(rowIndex, colIndex))
+        (cell, SudokuCellMeta(rowIndex, colIndex))
       }
-    }.find(_._1.isEmpty).map(_._2))
+    }.find { case (cell, _) =>
+      cell.value.isEmpty
+    }.map {
+      case (_, cellMeta: SudokuCellMeta) =>
+        cellMeta
+    })
   }
 
 extension (sudokuBoard: SudokuBoard)

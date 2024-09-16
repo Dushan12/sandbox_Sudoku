@@ -5,7 +5,7 @@ import com.sudoku.enumerations.BoardStateFinite.{Invalid, Solved}
 import com.sudoku.enumerations.{BoardStateActive, BoardStateFinite}
 import com.sudoku.extensions.*
 import com.sudoku.extensions.sudokuboard.*
-import com.sudoku.models.{SudokuBoard, SudokuCell, SudokuCellMeta}
+import com.sudoku.models.{SudokuBoard, SudokuCell}
 import com.sudoku.services.ValidationService.*
 import zio.{Unsafe, ZIO}
 
@@ -20,7 +20,7 @@ object SudokuSolverService {
       case notSolved: NotSolved =>
         for {
           possibleNextValues <- board.getAllPossibleSolutionsForCell(notSolved.nextEmptyCell)
-          possibleSolutions <- ZIO.collectAll(possibleNextValues.map { nextValue =>
+          possibleSolutions <- ZIO.collectAllPar(possibleNextValues.map { nextValue =>
             for {
               possibleNextStep <- board.putElementOn(notSolved.nextEmptyCell, SudokuCell(Some(nextValue)))
               isValidNextStepSolution <- areNumbersValid(possibleNextStep)
@@ -31,7 +31,7 @@ object SudokuSolverService {
                 ZIO.succeed(Invalid, board)
             }
           })
-          filterValidSolutions <- ZIO.collectAll(possibleSolutions).map(x => x.find {case (boardState, _) =>
+          filterValidSolutions <- ZIO.collectAllPar(possibleSolutions).map(x => x.find {case (boardState, _) =>
             boardState == Solved
           }.toList)
           hasMoreThanOneSolution <- ZIO.succeed(filterValidSolutions.length > 1)
@@ -49,16 +49,14 @@ object SudokuSolverService {
   }
 
   private def getBoardState(board: SudokuBoard): ZIO[Any, Nothing, BoardStateFinite | BoardStateActive] = {
-    for {
-      numbersAreValid <- areNumbersValid(board)
-      nextEmptyCell <- board.nextEmptyCell
-    } yield {
-      if (numbersAreValid) {
-        if (board.allCellsHaveValues)
-          Solved
-        else nextEmptyCell.map(NotSolved.apply).getOrElse(Invalid)
-      } else {
-        Invalid
+    board.nextEmptyCell.flatMap { nextEmptyCell =>
+      nextEmptyCell.map(x => ZIO.succeed(NotSolved.apply(x))).getOrElse {
+        areNumbersValid(board).map {
+          case true =>
+            Solved
+          case false =>
+            Invalid
+        }
       }
     }
   }

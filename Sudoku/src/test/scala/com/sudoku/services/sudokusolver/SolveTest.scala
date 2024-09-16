@@ -9,6 +9,7 @@ import zio.{Console, Scope, ZIO}
 
 object SolveTest  extends ZIOSpecDefault {
   def spec: Spec[TestEnvironment & Scope, Any] = {
+
     suite("Sudoku -> SudokuSolver -> Solve -> Specs")(
       test("Return solved board") {
         for {
@@ -25,28 +26,36 @@ object SolveTest  extends ZIOSpecDefault {
               |[{},{"value":4},{"value":9},{"value":7},{},{},{"value":8},{"value":3},{}]
               |]}""".stripMargin)
           inputBoard <- ZIO.fromEither(input.fromJson[SudokuBoard])
-          textInput <- ZIO.succeed(s"""|""" +
-            inputBoard.items.flatten.zipWithIndex.map { case (x, index) =>
-              val printValue = x.value.map(_.toString).getOrElse(" ")
-              if ((index + 1) % 9 == 0 && index != 80)
-                s"""$printValue|\n|"""
-              else
-                s"""$printValue|"""
-            }.mkString(""))
+          textInput <- ZIO.succeed(
+            s"""|""" +
+              inputBoard.items.flatten.zipWithIndex.map { case (x, index) =>
+                val printValue = x.value.map(_.toString).getOrElse(" ")
+                if ((index + 1) % 9 == 0 && index != 80)
+                  s"""$printValue|\n|"""
+                else
+                  s"""$printValue|"""
+              }.mkString(""))
           _ <- Console.printLine(textInput)
           _ <- Console.printLine("*" * 20)
+          startTime <- ZIO.succeed(System.currentTimeMillis())
           solvedBoard <- SudokuSolverService.solve(inputBoard)
-          text <- ZIO.succeed(s"""|""" +
-            solvedBoard._2.items.flatten.zipWithIndex.map { case (x, index) =>
-              val printValue = x.value.map(_.toString).getOrElse(" ")
-              if ((index + 1) % 9 == 0 && index != 80)
-                s"""$printValue|\n|"""
-              else
-                s"""$printValue|"""
-            }.mkString(""))
+          endTime <- ZIO.succeed(System.currentTimeMillis())
+
+          text <- ZIO.succeed(
+            s"""|""" +
+              solvedBoard._2.items.flatten.zipWithIndex.map { case (x, index) =>
+                val printValue = x.value.map(_.toString).getOrElse(" ")
+                if ((index + 1) % 9 == 0 && index != 80)
+                  s"""$printValue|\n|"""
+                else
+                  s"""$printValue|"""
+              }.mkString(""))
           _ <- Console.printLine(text)
+          _ <- Console.printLine("*" * 20)
+          duration <- Console.printLine("Duration " + (endTime - startTime) + " ms")
+          _ <- Console.printLine("*" * 20)
         } yield assertTrue(true)
-      }
-    )
+
+      })
   }
 }
