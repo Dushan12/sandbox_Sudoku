@@ -22,6 +22,4 @@ The proposed solution is immutable and recursive
     * Validate every move with reason why the move is not valid
     
 
-## Benchmark
-- Time to solve puzzle 
-  * AMD Ryzen™ 7 7730U ~= 1849 ms 
+
